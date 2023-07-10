@@ -1,0 +1,104 @@
+# $Id$
+# @package ploopi
+# @copyright Ovensia
+# @license GNU General Public License (GPL)
+# @version  $Revision$
+# @author $Author$
+# @modifiedby $LastChangedBy$
+# @lastmodified $Date$
+
+AddDefaultCharset UTF-8
+
+<IfModule mod_dir.c>
+    DirectoryIndex index.html index.php
+    Options +FollowSymLinks -Indexes
+</IfModule>
+
+<Files favicon.ico>
+  ErrorDocument 404 "The requested file favicon.ico was not found."
+</Files>
+
+<IfModule mod_expires.c>
+    ExpiresActive On
+    ExpiresDefault "access plus 1 month"
+    ExpiresByType text/html "access plus 1 second"
+    ExpiresByType image/x-icon "access plus 1 year"
+    ExpiresByType image/gif "access plus 1 month"
+    ExpiresByType image/png "access plus 1 month"
+    ExpiresByType image/jpeg "access plus 1 month"
+    ExpiresByType text/css "access plus 1 year"
+    ExpiresByType application/javascript "access plus 1 year"
+</IfModule>
+
+<IfModule mod_php7.c>
+    php_value memory_limit 1024M
+    php_value post_max_size 32M
+    php_value upload_max_filesize 32M
+    php_value max_input_vars 5000
+</IfModule>
+
+#SetEnv PHP_VALUE "memory_limit = 2048M"
+#SetEnv PHP_VALUE "post_max_size = 32M"
+#SetEnv PHP_VALUE "upload_max_filesize = 32M"
+#SetEnv PHP_VALUE "output_buffering = Off"
+
+<files *.svg.gz>
+    AddType "image/svg+xml" .gz
+    AddEncoding gzip .gz
+</files>
+
+<files *.js.gz>
+    AddType "text/javascript" .gz
+    AddEncoding gzip .gz
+</files>
+
+<files *.css.gz>
+    AddType "text/css" .gz
+    AddEncoding gzip .gz
+</files>
+
+<Files *.webp>
+    Header set Vary "Accept-Encoding"
+    AddType "image/webp" .webp
+    AddEncoding webp .webp
+</Files>
+
+<IfModule mod_headers.c>
+    Header set Access-Control-Allow-Origin "*"
+</IfModule>
+
+<IfModule rewrite_module>
+    RewriteEngine on
+
+    <FilesMatch "^ping.html|status$">
+      RewriteEngine Off
+    </FilesMatch>
+
+    # Changez cette valeur si PLOOPI est installé dans un sous dossier du site (ex : /test )
+    RewriteBase /
+
+    # pour les navigateurs qui précisent supporter webp
+    # si l'équivalent du fichier existe en webp, on le sert é la place
+    RewriteCond %{HTTP:Accept} image/webp
+    RewriteCond %{REQUEST_FILENAME}.webp -f
+    RewriteRule ^(.*)$ $1.webp [L]
+
+    # Vérifie si le navigateur peut accepter les fichier gzip
+    ReWriteCond %{HTTP:accept-encoding} gzip
+    RewriteCond %{HTTP_USER_AGENT} !Safari
+    # make sure there's no trailing .gz on the url
+    ReWriteCond %{REQUEST_FILENAME} !^.+\.gz$
+    # Vérifie si une version .gz du fichier existe
+    RewriteCond %{REQUEST_FILENAME}.gz -f
+    # Si toutes les conditions sont remplies on ajoute .gz à l'url du fichier (de maniére transparente)
+    RewriteRule ^(.+) $1.gz [QSA,L]
+
+    RewriteRule ^jp(.*)$ ja$1 [R=301,L]
+    RewriteRule ^cn(.*)$ zh$1 [R=301,L]
+
+    RewriteRule ^binpacker(.*)$ Applications/Rp/Lib/binpacker/index.php$1 [END]
+
+    RewriteCond %{REQUEST_FILENAME} !-f
+    RewriteCond %{REQUEST_FILENAME} !-d
+    RewriteRule ^(.*) index.php
+</IfModule>

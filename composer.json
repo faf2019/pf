@@ -1,0 +1,36 @@
+{
+    "name": "ovensia/pf",
+    "description": "Ploopi framework",
+    "version": "0.1-dev",
+    "keywords": ["php","ploopi","framework"],
+    "homepage": "http://www.ploopi.org",
+    "type": "project",
+    "minimum-stability": "dev",
+    "prefer-stable": true,
+    "license": "GPL-2.0",
+    "authors": [
+        {
+            "name": "Stéphane Escaich"
+        },
+        {
+            "name": "Audrey Gilbert"
+        }
+    ],
+    "repositories": [
+        {
+            "type": "pear",
+            "url": "https://pear.php.net"
+        }
+    ],
+    "require": {
+        "php": ">=5.6.0",
+        "ext-mcrypt": "*",
+        "ext-gd": "*",
+        "ext-zip": "*",
+        "ext-curl": "*",
+        "pear-pear.php.net/HTTP_Request2": "^2.3",
+        "phpmailer/phpmailer": "^6.0",
+        "zaininnari/html-minifier": "^0.4.2",
+        "pear/cache_lite": "^1.8"
+    }
+}
